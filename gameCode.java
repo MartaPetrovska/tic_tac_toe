@@ -2,26 +2,29 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-      int grid_size = 3;
-      int[][] grid = new int[grid_size][grid_size];
-      int userSymbol = 1;
-      int computerSymbol = 2;
+      int gridSize = 3;
+      char[][] grid = new char[gridSize][gridSize];
+      char userSymbol = 'X';
+      char computerSymbol = 'O';
       boolean gameIsOn = true;
       Scanner scanner = new Scanner(System.in);
 
       // Initializing game. 
-      System.out.println("Welcome to tic-tac-toe game! Here is games field.");
-      printGrid(grid, grid_size);
-      System.out.println ("When it is your turn write row and column coordinates to place your symbol..");
+      System.out.println("Welcome to tic-tac-toe game!");
+      System.out.println("When it is your turn write row and column coordinates to place your symbol.");
+      System.out.println("This is games field.");
+      initializeGrid(grid, gridSize);
       System.out.println();
 
       // Choosing which goes first (user or computer)
       int firstTurn = (int)(Math.random() * 2);
       if (firstTurn == 0) {
-        System.out.println("You start the game");
+        System.out.println("You start the game. Your symbol is X.");
+        System.out.println();
       }
       if (firstTurn == 1) {
-        System.out.println("Opponent starts the game.");
+        System.out.println("Computer starts the game.");
+        System.out.println();
       }
       
       //Games main loop
@@ -29,51 +32,51 @@ public class Main {
         // If user goes first
         if (firstTurn == 0){
           // Users turn
-          userTurn(grid, scanner);
-          printGrid(grid, grid_size);
+          userTurn(grid, scanner, userSymbol);
+          printGrid(grid, gridSize);
           System.out.println();
-          if (checkWin(grid, userSymbol)) {
-            System.out.println("Congratulation! You win!");
+          if (checkWin(grid, gridSize)) {
+            System.out.println("Congratulation! You won the game!");
             gameIsOn = false;
             break;
           } 
 
           // Computers turn
-          computerTurn(grid);
-          System.out.println("Oponents turn:");
-          printGrid(grid, grid_size);
+          computerTurn(grid, computerSymbol);
+          System.out.println("Computers turn:");
+          printGrid(grid, gridSize);
           System.out.println();
-          if (checkWin(grid, computerSymbol)) {
-            System.out.println("Computer wins!");
+          if (checkWin(grid, gridSize)) {
+            System.out.println("You lost the game!");
             gameIsOn = false;
             break;
           }
 
         } else { 
           // Computers turn
-          computerTurn(grid);
-          System.out.println("Oponents turn:");
-          printGrid(grid, grid_size);
+          computerTurn(grid, computerSymbol);
+          System.out.println("Computers turn:");
+          printGrid(grid, gridSize);
           System.out.println();
-          if (checkWin(grid, computerSymbol)) {
-            System.out.println("Computer wins!");
+          if (checkWin(grid, gridSize)) {
+            System.out.println("You lost the game!");
             gameIsOn = false;
             break;
           }
 
           // Users turn
-          userTurn(grid, scanner);
-          printGrid(grid, grid_size);
+          userTurn(grid, scanner, userSymbol);
+          printGrid(grid, gridSize);
           System.out.println();
-          if (checkWin(grid, userSymbol)) {
-            System.out.println("Congratulation! You win!");
+          if (checkWin(grid, gridSize)) {
+            System.out.println("Congratulation! You won the game!");
             gameIsOn = false;
             break;
           } 
         }
 
         //Check for draw.
-        if (checkDraw(grid, grid_size)) {
+        if (checkDraw(grid, gridSize)) {
           System.out.println("It's a draw!");
           gameIsOn = false;
           break;
@@ -82,9 +85,30 @@ public class Main {
       scanner.close();
     }
 
+
+  //Initialize grid. 
+    public static void initializeGrid(char[][] grid, int gridSize) {
+        for (int i = 0; i < gridSize; i++) {
+            for (int j = 0; j < gridSize; j++) {
+                grid[i][j] = '-';
+              System.out.print(grid[i][j] + " ");
+            }
+          System.out.println();
+        }
+    }
+
+  // Function that print out grid. 
+  public static void printGrid(char[][] grid, int gridSize) {
+    for (int i = 0; i < gridSize; i++) {
+        for (int j = 0; j < gridSize; j++) {
+          System.out.print(grid[i][j] + " ");
+        }
+      System.out.println();
+    }
+  }
   
     // Function to handle users turn.
-    public static void userTurn(int[][] grid, Scanner scanner) {
+    public static void userTurn(char[][] grid, Scanner scanner, char symbol) {
       boolean emptyField = true;
       while (emptyField) {
         System.out.println("Your turn. Write row number (1/2/3):");
@@ -92,8 +116,8 @@ public class Main {
         System.out.println("Write column number (1/2/3):");
         int column = scanner.nextInt() - 1;
         
-        if (grid[row][column] == 0) {
-          grid[row][column] = 1;
+        if (grid[row][column] == '-') {
+          grid[row][column] = symbol;
           emptyField = false;
         } else {
           System.out.println("Field is already taken. Please choose another one.");
@@ -103,50 +127,39 @@ public class Main {
 
   
     // Function to handle computers turn. 
-    public static void computerTurn(int[][] grid) {
+    public static void computerTurn(char[][] grid, char symbol) {
       boolean emptyField = true;
       while (emptyField) {
         int row = (int)(Math.random() * 3);
         int column = (int)(Math.random() * 3);
         
-        if (grid[row][column] == 0) {
-          grid[row][column] = 2;
+        if (grid[row][column] == '-') {
+          grid[row][column] = symbol;
           emptyField = false;
         } 
       }
     }
 
   
-    // Function that print out grid. 
-    public static void printGrid(int[][] grid, int grid_size) {
-      for (int i = 0; i < grid_size; i++) {
-          for (int j = 0; j < grid_size; j++) {
-            System.out.print(grid[i][j] + " ");
-          }
-        System.out.println();
-      }
-    }
-
-  
     // Function that checks each line if there is a win. 
-    public static boolean checkWin(int[][] grid, int symbol) {
+    public static boolean checkWin(char[][] grid, int gridSize) {
       // Check rows
-      for (int i = 0; i < grid.length; i++) {
-        if (grid[i][0] != 0 && grid[i][0] == grid[i][1] && grid[i][1] == grid[i][2]) {
+      for (int i = 0; i < gridSize; i++) {
+        if (grid[i][0] != '-' && grid[i][0] == grid[i][1] && grid[i][1] == grid[i][2]) {
           return true;
         }
       }
       // Check columns
-      for (int i = 0; i < grid.length; i++) {
-        if (grid[0][i] != 0 && grid[0][i] == grid[1][i] && grid[1][i] == grid[2][i]) {
+      for (int i = 0; i < gridSize; i++) {
+        if (grid[0][i] != '-' && grid[0][i] == grid[1][i] && grid[1][i] == grid[2][i]) {
           return true;
         }
       }
       // Check diagonals
-      if (grid[0][0] == symbol && grid[1][1] == symbol && grid[2][2] == symbol) {
+      if (grid[0][0] != '-' && grid[0][0] == grid[1][1] && grid[1][1] == grid[2][2]) {
         return true;
       };
-      if (grid[0][2] == symbol && grid[1][1] == symbol && grid[2][0] == symbol) {
+      if (grid[0][2] != '-' && grid[0][2] == grid[1][1] && grid[1][1] == grid[2][0]) {
         return true;
       };
 
@@ -155,16 +168,15 @@ public class Main {
 
   
     // Function that checks if grid is full and there is a draw. 
-    public static boolean checkDraw(int[][] grid, int grid_size) {
-      int filledFields = 0;
-      for (int i = 0; i < grid_size; i++) {
-          for (int j = 0; j < grid_size; j++) {
-            if (grid[i][j] != 0) {
-              filledFields ++;
-            }
+    public static boolean checkDraw(char[][] grid, int gridSize) {
+      for (int i = 0; i < gridSize; i++) {
+          for (int j = 0; j < gridSize; j++) {
+              if (grid[i][j] == '-') {
+                  return false;
+              }
           }
       }
-      return filledFields == grid_size * grid_size;
+      return true;
     }
   
 }
